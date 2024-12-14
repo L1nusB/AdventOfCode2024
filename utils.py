@@ -67,6 +67,27 @@ def read_rows_from_file(filename: str) -> List[List[int]]:
     except Exception as e:
         print(f"Error reading file: {str(e)}")
         return []
+    
+def read_file_to_string(filename: str) -> str:
+    """
+    Reads a text file and returns its entire content as a string.
+    
+    Args:
+        filename (str): Path to the text file
+        
+    Returns:
+        str: The entire content of the file as a string
+    """
+    try:
+        with open(filename, 'r') as file:
+            return file.read()
+            
+    except FileNotFoundError:
+        print(f"Error: File '{filename}' not found.")
+        return ""
+    except Exception as e:
+        print(f"Error reading file: {str(e)}")
+        return ""
 
 if __name__ == "__main__":
     dat = read_rows_from_file("Day2/input.txt")
