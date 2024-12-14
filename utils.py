@@ -1,6 +1,6 @@
 from typing import List
 
-def read_columns_from_file(filename: str) -> List[List[int]]:
+def read_columns_from_file(filename: str, datatype: type = int) -> List[List[int]]:
     """
     Reads a text file where each row has columns separated by whitespace
     and returns a list of columns. Values are converted to integers.
@@ -19,7 +19,7 @@ def read_columns_from_file(filename: str) -> List[List[int]]:
         with open(filename, 'r') as file:
             for line in file:
                 # Split the line and convert to integers
-                values: List[int] = [int(val) for val in line.split() if val]
+                values: List[int] = [datatype(val) for val in line.split() if val]
                 max_columns = max(max_columns, len(values))
                 rows.append(values)
         
@@ -43,7 +43,7 @@ def read_columns_from_file(filename: str) -> List[List[int]]:
         print(f"Error reading file: {str(e)}")
         return []
     
-def read_rows_from_file(filename: str) -> List[List[int]]:
+def read_rows_from_file(filename: str, datatype: type = int) -> List[List[int]]:
     """
     Reads a text file where each row has integers separated by whitespace
     and returns a list of rows.
@@ -56,7 +56,7 @@ def read_rows_from_file(filename: str) -> List[List[int]]:
     """
     try:
         with open(filename, 'r') as file:
-            return [[int(val) for val in line.split() if val] for line in file]
+            return [[datatype(val) for val in line.split() if val] for line in file]
     
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
