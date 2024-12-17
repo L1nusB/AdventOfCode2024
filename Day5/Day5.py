@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Dict, Set, List
+from numpy.typing import NDArray
 
 def create_preconditions(rules: np.ndarray) -> Dict[int, Set[int]]:
     pres = rules[:,0]
@@ -27,20 +28,26 @@ def get_correct_orders_center_sum(preconditions: Dict[int, Set[int]], orders: Li
 def fix_order(preconditions: Dict[int, Set[int]], order: np.ndarray) -> np.ndarray:
     fixed_order = order
     items = []
-    for i, element in enumerate(order):
+    i = 0
+    while i < order.size:
+        element = fixed_order[i]
         broken_conditions = preconditions.get(element, set()) & set(items)
         items.append(element)
         if broken_conditions:
-            for j, subelement in enumerate(order[:i]):
+            for j, subelement in enumerate(fixed_order[:i]):
                 if subelement in broken_conditions:
-                    print(order[:j], subelement , order[j+1:])
-                    fixed_order = np.concatenate([order[:j],[subelement] , order[j+1:]])
+                    print(fixed_order[:j], element , np.delete(fixed_order[j:], np.argwhere(fixed_order[j:]==element)))
+                    fixed_order = np.concatenate([fixed_order[:j],[element] , np.delete(fixed_order[j:], np.argwhere(fixed_order[j:]==element))])
+                    i = 0
+                    items = []
                     break
+        else:
+            i+=1
     return fixed_order
                     
                     
 if __name__=='__main__':
-    with open("test.txt", "r") as f:
+    with open("Day5/input.txt", "r") as f:
         da = np.array(f.read().splitlines())
 
     split_index = np.where(da=='')[0][0]
@@ -56,6 +63,8 @@ if __name__=='__main__':
     
     fixed = fix_order(preconditions, orders[3])
     print(fixed)
+    fixed_orders = [fix_order(preconditions, o) for o in orders if not check_valid(preconditions, o)]
+    print(sum(o[o.size//2] for o in fixed_orders))
     
     #print([check_valid(preconditions, o) for o in orders])
     
