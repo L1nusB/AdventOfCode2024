@@ -6,20 +6,12 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Optional: Create a new environment
-# Uncomment and modify the following lines to create a specific environment
-# COPY environment.yml .
-# RUN conda env create -f environment.yml
+# Copy and create the custom environment
+COPY environment.yml .
+RUN conda env create -f environment.yml
 
-# Set up conda to automatically activate base environment
+# Set up conda to automatically activate
 RUN conda init bash
-
-# Optional: Install additional conda packages in base environment
-RUN conda install -y \
-    numpy \
-    pandas \
-    matplotlib \
-    jupyter
 
 # Set the default shell to bash
 SHELL ["/bin/bash", "-c"]
