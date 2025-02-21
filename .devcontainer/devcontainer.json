@@ -11,11 +11,11 @@
                 "ms-toolsai.jupyter"
             ],
             "settings": {
-                "python.defaultInterpreterPath": "/opt/conda/bin/python",
+                "python.defaultInterpreterPath": "/opt/conda/envs/codespace/bin/python",
                 "python.linting.enabled": true
             }
         }
     },
     "forwardPorts": [],
-    "postCreateCommand": "conda init bash && echo 'conda activate base' >> ~/.bashrc"
+    "postCreateCommand": "conda init bash && echo 'conda activate codespace' >> ~/.bashrc"
 }
