@@ -1,4 +1,4 @@
-name: codebase
+name: codespace
 channels:
   - conda-forge
   - defaults
