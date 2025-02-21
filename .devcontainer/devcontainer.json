@@ -1,8 +1,12 @@
 {
     "name": "Python Environment",
     "build": {
-        "dockerfile": "Dockerfile"
+        "dockerfile": "Dockerfile",
+        "args": {
+            "USERNAME": "codeuser"
+        }
     },
+    "remoteUser": "codeuser",
     "features": {},
     "customizations": {
         "vscode": {
