@@ -1,12 +1,12 @@
 import numpy as np
-from typing import List, Optional
+from typing import List, Tuple
 
 def extract_data(path: str) -> str:
     with open(path, "r") as f:
         dat = f.read()
     return dat 
 
-def create_discmap(input: str) -> np.ndarray:
+def create_discmap(input: str) -> Tuple[np.ndarray, np.ndarray]:
     arr = np.array(list(input.strip()), dtype=int)
     discmap = np.zeros(shape=arr.sum(), dtype=int)
     file_blocks, free_blocks = arr[::2], arr[1::2]
@@ -18,7 +18,7 @@ def create_discmap(input: str) -> np.ndarray:
     # Last fileblock needs to be set manually since it does not have a corresponding free block
     # and thus is not covered by the zipping
     discmap[-file_blocks[-1]:] = len(file_blocks)-1
-    return discmap
+    return discmap, file_blocks
 
 def create_discmap_optimized(input: str) -> np.ndarray:
     """Optimized version of create_discmap using numpy's capabilities based on Claude Sonnet 3.7"""
@@ -47,11 +47,24 @@ def create_discmap_optimized(input: str) -> np.ndarray:
     discmap = np.where(repeated_is_free, -1, repeated_ids)
     
     return discmap
+
+def reorder_disc(discmap: np.ndarray, file_blocks: np.ndarray):
+    # Only the positions after the final desired size need to be considered for reorder
+    reorder_blocks = discmap[file_blocks.sum():]
+    # Remove entries for free blocks
+    reorder_blocks = reorder_blocks[reorder_blocks!=-1]
+    # Since we put the blocks from back to front reverse the data and then go from the front
+    reorder_blocks = np.flip(reorder_blocks)
+    reordered_discmap = discmap.copy()[:file_blocks.sum()]
+    reordered_discmap[reordered_discmap==-1] = reorder_blocks
+    reordered_discmap[file_blocks.sum():] = -1
+    return reordered_discmap
     
 if __name__ == "__main__":
     # input = extract_data("Day9/input.txt")
-    # input = extract_data("Day9/test1.txt")
+    input = extract_data("Day9/test1.txt")
     # org_discmap = create_discmap(input)
-    input = extract_data("Day9/test2.txt")
-    org_discmap = create_discmap(input)
+    # input = extract_data("Day9/test2.txt")
+    org_discmap, file_blocks = create_discmap(input)
+    reordered_discmap = reorder_disc(org_discmap, file_blocks)
     a = 0
