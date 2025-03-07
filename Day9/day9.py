@@ -48,23 +48,29 @@ def create_discmap_optimized(input: str) -> np.ndarray:
     
     return discmap
 
-def reorder_disc(discmap: np.ndarray, file_blocks: np.ndarray):
+def reorder_disc(discmap: np.ndarray, file_length: int) -> np.ndarray:
     # Only the positions after the final desired size need to be considered for reorder
-    reorder_blocks = discmap[file_blocks.sum():]
+    reorder_blocks = discmap[file_length:]
     # Remove entries for free blocks
     reorder_blocks = reorder_blocks[reorder_blocks!=-1]
     # Since we put the blocks from back to front reverse the data and then go from the front
     reorder_blocks = np.flip(reorder_blocks)
-    reordered_discmap = discmap.copy()[:file_blocks.sum()]
+    reordered_discmap = discmap.copy()[:file_length]
     reordered_discmap[reordered_discmap==-1] = reorder_blocks
-    reordered_discmap[file_blocks.sum():] = -1
+    reordered_discmap[file_length:] = -1
     return reordered_discmap
+
+def calc_checksum(discmap: np.ndarray, file_length: int) -> int:
+    mult_map = discmap[:file_length] * np.arange(file_length, dtype=int)
+    return mult_map.sum()
     
 if __name__ == "__main__":
-    # input = extract_data("Day9/input.txt")
-    input = extract_data("Day9/test1.txt")
+    input = extract_data("Day9/input.txt")
+    # input = extract_data("Day9/test1.txt")
     # org_discmap = create_discmap(input)
     # input = extract_data("Day9/test2.txt")
     org_discmap, file_blocks = create_discmap(input)
-    reordered_discmap = reorder_disc(org_discmap, file_blocks)
-    a = 0
+    file_length = file_blocks.sum()
+    reordered_discmap = reorder_disc(org_discmap, file_length)
+    checksum = calc_checksum(reordered_discmap, file_length)
+    print(checksum)
